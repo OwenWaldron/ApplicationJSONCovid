@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">ApplicationJSONCovid</string>
+    <string name="date">Date d\'inquet</string>
+    <string name="date2">Date d\'\'inquiet</string>
+    <string name="date3">Date de recherche</string>
+    <string name="prov">Province</string>
+    <string name="search">Rechercher</string>
+    <string name="cases">Cases Actifs:</string>
+</resources>
