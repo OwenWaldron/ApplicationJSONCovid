@@ -6,4 +6,11 @@
     <string name="prov">Province</string>
     <string name="search">Rechercher</string>
     <string name="cases">Cases Actifs:</string>
+    <string name="change">Change total au cases actifs:</string>
+    <string name="morts">Morts:</string>
+    <string name="newi">Nouvelles infections:</string>
+    <string name="rec">Guéri</string>
+    <string name="reco">Guéri:</string>
+    <string name="zero">0</string>
+    <string name="zero2">"  0  "</string>
 </resources>
