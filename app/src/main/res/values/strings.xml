@@ -13,4 +13,6 @@
     <string name="reco">Guéri:</string>
     <string name="zero">0</string>
     <string name="zero2">"  0  "</string>
+    <string name="sampleText">Donnez le jour mois (sans accent) et annee. Exemple: 2 Fevrier 2021</string>
+    <string name="newel">Nouvelles infections:</string>
 </resources>

@@ -10,6 +10,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -20,10 +22,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
     TextView txtHello, txtCases, txtNewCases, txtDead,txtHealed,txtChange;
     EditText txtDate, txtProv;
     Button btnSearch;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,13 +81,14 @@ public class MainActivity extends AppCompatActivity {
         String prov=txtProv.getText().toString();
         String date=txtDate.getText().toString();
         String dates[] = date.split(" ");
-        if (dates[2].length()==1) {
-            dates[2]="0"+dates[2];
+        if (dates[0].length()==1) {
+            dates[0]="0"+dates[0];
         }
         String date2="";
+        Log.d("month",dates[1]);
         switch (dates[1]) {
             case "Janvier": date2="01"; break;
-            case "Fevrier": date2="0"; break;
+            case "Fevrier": date2="02"; break;
             case "Mars": date2="03"; break;
             case "Avril": date2="04"; break;
             case "Mai": date2="05"; break;
@@ -92,64 +100,101 @@ public class MainActivity extends AppCompatActivity {
             case "Novembre": date2="11"; break;
             case "Decembre": date2="12"; break;
         }
-        date2=dates[2]+"-"+date2+"-"+dates[1];
-        String real="ERROR";
-        switch (prov)  {
-            case "Ontario": real="ON"; break;
-            case "Alberta": real="AB"; break;
-            case "Colombie britannique": real="BC"; break;
-            case "Manitoba": real="MB"; break;
-            case "Nouveau-Brunswick": real="NB"; break;
-            case "Terre-Neuve-et-Labrador": real="NL"; break;
-            case "Northwest Territories": real="NWT"; break;
-            case "Nouvelle-Ecosse": real="Ns"; break;
-            case "Nunavut": real="NU"; break;
-            case "Ile-du-Prince-Edouard": real="PE"; break;
-            case "Quebec": real="QB"; break;
-            case "Saskatchewan": real="SK"; break;
-            case "Yukon": real="YT"; break;
-        }
-        Log.d("affiching", date2+" and "+real);
-        String url ="https://api.opencovid.ca/summary?loc="+real+"&date="+date2;
-        JsonObjectRequest jsonObjectRequest=new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    JSONArray jsonArray = response.getJSONArray("summary");
-                    JSONObject object = jsonArray.getJSONObject(0);
-                    int cases = object.getInt("active_cases");
-                    int newCases = object.getInt("cases");
-                    int dead = (int) object.getDouble("deaths");
-                    int recovered = (int) object.getDouble("recovered");
-                    int change = object.getInt("active_cases_change");
+        int intDate = Integer.valueOf(dates[2]+date2+dates[0]);
+        date2=dates[2]+"-"+date2+"-"+dates[0];
+        String vers[] = txtHello.getText().toString().split(" ");
+        int intVers = Integer.valueOf(vers[1].replaceAll("-",""));
+        if (intDate>intVers||intDate<20200125) {
+            Toast.makeText(MainActivity.this, "Entrez un date entre 2020-01-25 et "+vers[1], Toast.LENGTH_LONG).show();
+        } else {
+            String real = "ERROR";
+            switch (prov) {
+                case "Ontario":
+                    real = "ON";
+                    break;
+                case "Alberta":
+                    real = "AB";
+                    break;
+                case "Colombie britannique":
+                    real = "BC";
+                    break;
+                case "Manitoba":
+                    real = "MB";
+                    break;
+                case "Nouveau-Brunswick":
+                    real = "NB";
+                    break;
+                case "Terre-Neuve-et-Labrador":
+                    real = "NL";
+                    break;
+                case "Northwest Territories":
+                    real = "NWT";
+                    break;
+                case "Nouvelle-Ecosse":
+                    real = "Ns";
+                    break;
+                case "Nunavut":
+                    real = "NU";
+                    break;
+                case "Ile-du-Prince-Edouard":
+                    real = "PE";
+                    break;
+                case "Quebec":
+                    real = "QB";
+                    break;
+                case "Saskatchewan":
+                    real = "SK";
+                    break;
+                case "Yukon":
+                    real = "YT";
+                    break;
+            }
+            if (real.equals("ERROR")) {
+                Toast.makeText(MainActivity.this, "Province inconnue, utilise aucune accent. Exemples: Ontario ou Nouvelle-Ecosse", Toast.LENGTH_LONG).show();
+            } else {
+                Log.d("affiching", date2 + " and " + real);
+                String url = "https://api.opencovid.ca/summary?loc=" + real + "&date=" + date2;
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            JSONArray jsonArray = response.getJSONArray("summary");
+                            JSONObject object = jsonArray.getJSONObject(0);
+                            int cases = object.getInt("active_cases");
+                            int newCases = object.getInt("cases");
+                            int dead = (int) object.getDouble("deaths");
+                            int recovered = (int) object.getDouble("recovered");
+                            int change = object.getInt("active_cases_change");
 
-                    txtDate.setText("");
-                    txtProv.setText("");
+                            txtDate.setText("");
+                            txtProv.setText("");
 
-                    txtCases.setText("   "+Integer.toString(cases)+"   ");
-                    txtNewCases.setText("   "+Integer.toString(newCases)+"   ");
-                    txtHealed.setText("   "+Integer.toString(recovered)+"   ");
-                    txtDead.setText("   "+Integer.toString(dead)+"   ");
-                    txtChange.setText("   "+Integer.toString(change)+"   ");
+                            txtCases.setText("   " + Integer.toString(cases) + "   ");
+                            txtNewCases.setText("   " + Integer.toString(newCases) + "   ");
+                            txtHealed.setText("   " + Integer.toString(recovered) + "   ");
+                            txtDead.setText("   " + Integer.toString(dead) + "   ");
+                            txtChange.setText("   " + Integer.toString(change) + "   ");
 
-                    InputMethodManager input = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                    if (getCurrentFocus()!=null) {
-                        input.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                            InputMethodManager input = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                            if (getCurrentFocus() != null) {
+                                input.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.d("IT CAUGHT", "ERROR IT CUAGHT");
+                        }
+
                     }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Log.d("IT CAUGHT", "ERROR IT CUAGHT");
-                }
-
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("ERRORRESPONS", "EROORO RERADEIOFORG HI" + error);
+                    }
+                });
+                RequestQueue requestQueue = Volley.newRequestQueue(this);
+                requestQueue.add(jsonObjectRequest);
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("ERRORRESPONS","EROORO RERADEIOFORG HI"+error);
-            }
-        });
-        RequestQueue requestQueue= Volley.newRequestQueue(this);
-        requestQueue.add(jsonObjectRequest);
+        }
     }
 }
